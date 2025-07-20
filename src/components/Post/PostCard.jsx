@@ -19,12 +19,33 @@ import ChatBublbleIcon from "@mui/icons-material/ChatBubble";
 import BookMarkIcon from "@mui/icons-material/Bookmark";
 import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { createCommentAction, likePostsAction } from "../../redux/post/post.action";
+import { isLikedByUser } from "../../utls/isLikedByUser";
 
 export default function PostCard({ item }) {
 
   const [showComments, setShowComments] = useState(false);
-  
+
+  const dispatch = useDispatch();
+
+  const { post, auth } = useSelector((store) => store);
+
   const handleShowComment = () => setShowComments(!showComments);
+
+  const handleCreateComment = (content) => {
+    const reqData = {
+      postId: item.id,
+      data: { content },
+    };
+    dispatch(createCommentAction(reqData));
+
+  };
+
+  const handleLikePost = () => {
+    dispatch(likePostsAction(item.id));
+
+  }
 
   return (
     <Card className="">
@@ -61,14 +82,14 @@ export default function PostCard({ item }) {
 
       <CardActions className="flex justify-between" disableSpacing>
         <div>
-          <IconButton>
-            {true ? <FavouriteIcon /> : <FavouriteBorderIcon />}
+          <IconButton onClick={handleLikePost}>
+            {isLikedByUser(auth.user.id, item) ? <FavouriteIcon /> : <FavouriteBorderIcon />}
           </IconButton>
           <IconButton>
             <ShareIcon />
           </IconButton>
           <IconButton onClick={handleShowComment}>
-            <ChatBublbleIcon  />
+            <ChatBublbleIcon />
           </IconButton>
         </div>
         <div>
@@ -77,28 +98,33 @@ export default function PostCard({ item }) {
           </IconButton>
         </div>
       </CardActions>
-      {showComments && <section>
-        <div className="flex items-center space-x-5 mx-3 my-5">
-          <Avatar />
-          <input
-            onKeyPress={(e) => {
-              if(e.key == "Enter") console.log("Enter pressed...", e.target.value);
-            }}
-            className="w-full outline-none bg-transparent border border-[#3b4050] rounded-full px-5 py-2"
-            type="text"
-            placeholder="Write your comment..."
-          />
-        </div>
-        <Divider />
-        <div className="mx-3 space-y-2 my-5 text-xs">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center space-x-5">
-              <Avatar sx={{ height: "2rem", width: "2rem", fontSize: ".8rem"}} >C</Avatar>
-              <p>nice image</p>
-            </div>
+      {showComments && (
+        <section>
+          <div className="flex items-center space-x-5 mx-3 my-5">
+            <Avatar />
+            <input
+              onKeyPress={(e) => {
+                if (e.key === "Enter") handleCreateComment(e.target.value);
+              }}
+              className="w-full outline-none bg-transparent border border-[#3b4050] rounded-full px-5 py-2"
+              type="text"
+              placeholder="Write your comment..."
+            />
           </div>
-        </div>
-      </section>}
+          <Divider />
+          <div className="mx-3 space-y-2 my-5 text-xs">
+            {item?.comments.map((comment) => (
+              <div key={comment?.id} className="flex items-center space-x-5">
+                <Avatar
+                  sx={{ height: "2rem", width: "2rem", fontSize: ".8rem" }}>
+                  {comment?.user?.firstName[0]}
+                </Avatar>
+                <p>{comment?.content}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
     </Card>
   );
 }

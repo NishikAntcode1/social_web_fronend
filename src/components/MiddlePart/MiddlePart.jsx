@@ -8,7 +8,7 @@ import PostCard from "../Post/PostCard";
 import { useEffect, useState } from "react";
 import CreatePostModal from "../CreatePost/CreatePostModal";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllPostAction } from "../../redux/post/post.action";
+import { createCommentAction, getAllPostAction } from "../../redux/post/post.action";
 
 const story = [1, 2, 3, 4, 5];
 export default function MiddlePart() {
@@ -24,7 +24,7 @@ export default function MiddlePart() {
   useEffect(() => {
     dispatch(getAllPostAction())
   
-  }, [])
+  }, [post.newComment])
   
 
   return (
