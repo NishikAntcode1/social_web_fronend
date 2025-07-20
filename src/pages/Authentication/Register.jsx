@@ -10,6 +10,7 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import * as Yup from "yup";
 import { registerUserAction } from "../../redux/auth/auth.action";
+import { data, useNavigate } from "react-router-dom";
 
 const initialValues = { firstName: "", lastName : "", email: "", password: "", gender: "male" };
 const validationSchema = {
@@ -27,9 +28,11 @@ export default function Register() {
   const [gender, setGender] = useState("male");
   const dispatch = useDispatch();
 
+  const navigate = useNavigate();
+
   const handleSubmit = (values) => {
     values.gender = gender;
-    dispatch(registerUserAction(values));
+    dispatch(registerUserAction({data: values}));
     setFormValue(values);
     console.log("Form submitted with values:", values);
   };
@@ -127,10 +130,14 @@ export default function Register() {
             variant="contained"
             type="submit"
             color="primary">
-            Login
+            REGISTER
           </Button>
         </Form>
       </Formik>
+      <div className="flex gap-2 items-center justify-center p-5">
+        <p>If you already have an account ?</p>
+        <Button onClick={() => navigate("/login")}>LOGIN</Button>
+      </div>
     </>
   );
 }

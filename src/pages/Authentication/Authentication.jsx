@@ -2,6 +2,7 @@ import { Card, Grid } from "@mui/material";
 import SocialBanner from "../../assets/social-media-3846597_1280.webp";
 import Login from "./Login";
 import Register from "./Register";
+import { Route, Routes } from "react-router-dom";
 
 export default function Authentication() {
   return (
@@ -17,8 +18,11 @@ export default function Authentication() {
                 <h1 className="logo text-center">Social-Web</h1>
                 <p className="text-center text-sm w-[70&]">Connecting Lives, Sharing Stories: Your Social World, Your Way</p>
               </div>
-              <Login />
-              {/* <Register /> */}
+              <Routes>
+                <Route index element={<Login />} />
+                <Route path="/login" element={<Login />}></Route>
+                <Route path="/register" element={<Register />}></Route>
+              </Routes>
             </Card>
           </div>
         </Grid>
